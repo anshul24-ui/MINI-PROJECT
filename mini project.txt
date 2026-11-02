@@ -1,0 +1,149 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifdef _WIN32
+#include <windows.h>
+void pauseAnimation()
+{
+    Sleep(150);
+}
+#else
+#include <unistd.h>
+void pauseAnimation()
+{
+    usleep(150000);
+}
+#endif
+
+#define ROW 22
+#define COL 65
+
+char track[ROW][COL];
+
+void createTrack()
+{
+    int i;
+
+    for(i=2; i<=15; i++)
+        track[i][10] = '#';
+
+    for(i=10; i<=25; i++)
+        track[15][i] = '#';
+
+    for(i=8; i<=15; i++)
+        track[i][25] = '#';
+
+    for(i=25; i<=40; i++)
+        track[8][i] = '#';
+
+    for(i=8; i<=15; i++)
+        track[i][40] = '#';
+
+    for(i=40; i<=55; i++)
+        track[15][i] = '#';
+
+    for(i=3; i<=15; i++)
+        track[i][55] = '#';
+}
+
+void display(int x, int y)
+{
+    int i, j;
+
+    printf("\033[2J\033[H");
+
+    printf("       ROBOT CAR LINE FOLLOWING\n\n");
+
+    for(i=0; i<ROW; i++)
+    {
+        for(j=0; j<COL; j++)
+        {
+            if(i == y-1 && j == x-3)
+            {
+                printf(" _______");
+                j += 7;
+            }
+            else if(i == y && j == x-3)
+            {
+                printf("|  ___  |");
+                j += 8;
+            }
+            else if(i == y+1 && j == x-3)
+            {
+                printf("O-------O");
+                j += 8;
+            }
+            else if(track[i][j] == '#')
+                printf("#");
+            else
+                printf(" ");
+        }
+        printf("\n");
+    }
+
+    printf("\n# = Track    O = Car Wheels\n");
+
+    fflush(stdout);
+}
+
+int main()
+{
+    int x, y;
+    int i;
+
+    createTrack();
+
+    /* First vertical section */
+    for(y=2; y<=15; y++)
+    {
+        display(10,y);
+        pauseAnimation();
+    }
+
+    /* First horizontal section */
+    for(x=11; x<=25; x++)
+    {
+        display(x,15);
+        pauseAnimation();
+    }
+
+    /* Second vertical section */
+    for(y=14; y>=8; y--)
+    {
+        display(25,y);
+        pauseAnimation();
+    }
+
+    /* Second horizontal section */
+    for(x=26; x<=40; x++)
+    {
+        display(x,8);
+        pauseAnimation();
+    }
+
+    /* Third vertical section */
+    for(y=9; y<=15; y++)
+    {
+        display(40,y);
+        pauseAnimation();
+    }
+
+    /* Third horizontal section */
+    for(x=41; x<=55; x++)
+    {
+        display(x,15);
+        pauseAnimation();
+    }
+
+    /* Final vertical section */
+    for(y=14; y>=3; y--)
+    {
+        display(55,y);
+        pauseAnimation();
+    }
+
+    printf("\n       ROBOT REACHED FINISH!\n");
+
+    return 0;
+}
